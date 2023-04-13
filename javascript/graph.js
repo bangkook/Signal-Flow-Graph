@@ -1,16 +1,12 @@
 class SignalFLowGraph {
-    // defining vertex array and
-    // adjacent list
+
     constructor(noOfVertices)
     {
         this.noOfVertices = noOfVertices;
         this.AdjList = new Map();
         this.forwardPaths = [];
         this.loops = [];
-        this.delta = new Map();
-
     }
-
     
     // add vertex to the graph
     addVertex(v)
@@ -18,15 +14,11 @@ class SignalFLowGraph {
         // initialize the adjacent list with a
         // null array
         this.AdjList.set(v, []);
-        for(var i = 0; i < 100; i++)
-            this.delta.set(i, []);
     }
 
     // add edge to the graph
     addEdge(v, w, weight)
     {
-        // get the list for vertex v and put the
-        // vertex w denoting edge between v and w
         this.AdjList.get(v).push([w, weight]);
     }
 
@@ -34,18 +26,7 @@ class SignalFLowGraph {
         return this.AdjList;
     }
 
-    arraysEqual(a, b) {
-        if (a === b) return true;
-        if (a == null || b == null) return false;
-        if (a.length !== b.length) return false;
-      
-        for (var i = 0; i < a.length; ++i) {
-          if (a[i] !== b[i]) return false;
-        }
-        return true;
-    }
-
-    // Main DFS method
+    // Use DFS to get all forward paths and loops
     analyze(source, destination)
     {
         var visited = {};
@@ -117,44 +98,6 @@ class SignalFLowGraph {
         path_gain /= gain;
     }
 
-    // check if all loops of the combination are non-touching
-    nonTouching(loops, combination){
-        for(var i = 0; i < combination.length; i++){
-            for(var j = i + 1; j < combination.length; j++){
-                for(var node of loops[combination[i]][0]){
-                    if(loops[combination[j]][0].indexOf(node) != -1)
-                        return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    // add non-touching loops to the corresponding map
-    addNonTouching(loops, length, gain){
-        this.delta.get(length).push({"loops": loops.map((x) => x), "gain": gain});
-    }
-
-    // produce all combinations of loops, and check if they are non-touching or not
-    getCombinations(loop, length, combination, gain, all_loops, len){
-
-        if(combination.length == length){
-            if(this.nonTouching(all_loops, combination)){
-                this.addNonTouching(combination, length, gain);
-            }
-            return;
-        }
-
-        for(var i = loop; i < len; i++){
-            combination.push(i);
-            gain *= all_loops[i][1];
-            this.getCombinations(i+1, length, combination, gain, all_loops, len);
-            combination.pop();
-            gain /= all_loops[i][1];
-        }
-
-    }
-
     printGraph()
     {
         // get all the vertices
@@ -179,8 +122,102 @@ class SignalFLowGraph {
     }
 }
 
-// Using the above implemented graph class
-var g = new Graph(8);
+ class Mason{
+    constructor(forwardPaths, loops)
+    {
+        this.forwardPaths = forwardPaths;
+        this.loops = loops;
+        this.non_touching = new Map();
+        this.non_touching_paths = new Array(forwardPaths.length);
+        this.delta = new Map();
+        for(var i = 0; i < 100; i++)
+            this.non_touching.set(i, []);
+
+    }
+
+     // check if all loops of the combination are non-touching
+     isNonTouching(combination){
+        for(var i = 0; i < combination.length; i++){
+            for(var j = i + 1; j < combination.length; j++){
+                for(var node of this.loops[combination[i]][0]){
+                    if(this.loops[combination[j]][0].indexOf(node) != -1)
+                        return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    // add non-touching loops to the corresponding map
+    addNonTouching(loops, length, gain){
+        this.non_touching.get(length).push({"loops": loops.map((x) => x), "gain": gain});
+    }
+
+    // produce all combinations of loops, and check if they are non-touching or not
+    getCombinations(loop, length, combination, gain){
+
+        if(combination.length == length){
+            if(this.isNonTouching(combination)){
+                this.addNonTouching(combination, length, gain);
+            }
+            return;
+        }
+
+        for(var i = loop; i < this.loops.length; i++){
+            combination.push(i);
+            gain *= this.loops[i][1];
+            this.getCombinations(i + 1, length, combination, gain);
+            combination.pop();
+            gain /= this.loops[i][1];
+        }
+
+    }
+
+    getNonTouchingPath(){
+        var idx = 0, num = 1;
+        for(var path of this.forwardPaths) {
+            this.non_touching_paths[idx] = new Map();
+            for(var j = 0; j < 100; j++)
+                this.non_touching_paths[idx].set(j, []);
+            for(var i = 0; i < this.loops.length; i++){
+                var nonTouching = true;
+                for(var node of this.loops[i][0]){
+                    if(path.nodes.indexOf(node) != -1){
+                        nonTouching = false;
+                        break;
+                    }
+                }
+                if(nonTouching)
+                    this.non_touching_paths[idx].get(num).push({"loops": i, "gain": this.loops[i][1]});
+            }
+            idx++;
+        }
+
+        for(var idx in this.forwardPaths){
+            //Loops not intersecting with path
+            var path_loops = this.non_touching_paths[idx].get(1); 
+            for(var num = 2; num < 100; num++){
+                var loops = this.non_touching.get(num);
+                if(loops.length == 0)
+                    break;
+                for(var data of loops){
+                    var indeces = data.loops, cnt = 0;
+                    for(var index of path_loops){
+                        if(indeces.indexOf(index.loops) != -1)
+                            cnt++;
+                    }
+                    if(cnt < indeces.length){
+                        continue;
+                    }
+                    this.non_touching_paths[idx].get(num).push(data);
+                }
+            }
+            console.log(idx, this.non_touching_paths[idx]);
+        }
+    }
+    
+}
+var g = new SignalFLowGraph(8);
 var vertices = [ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
  
 // adding vertices
@@ -226,17 +263,16 @@ g.printGraph();
 // A B C E D F
 console.log("DFS");
 g.analyze('A', 'H');
-
 console.log(g.forwardPaths, g.loops);
+var mason = new Mason(g.forwardPaths, g.loops);
 var combination = [];
 var num = 2;
 do {
-    g.getCombinations(0, num, combination, 1, data[1], data[1].length);
-    console.log(g.delta.get(num));
+    mason.getCombinations(0, num, combination, 1);
+    console.log(mason.non_touching.get(num));
 
-} while(g.delta.get(num++).length > 0)
-
-
+} while(mason.non_touching.get(num++).length > 0);
+mason.getNonTouchingPath();
 /*else { // If visited before then a cycle is detected
                 var index = 0;
                 for(var i in path){
