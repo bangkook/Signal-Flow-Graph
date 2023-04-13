@@ -212,13 +212,55 @@ class SignalFLowGraph {
                     this.non_touching_paths[idx].get(num).push(data);
                 }
             }
-            console.log(idx, this.non_touching_paths[idx]);
+            //console.log(idx, this.non_touching_paths[idx]);
         }
+    }
+
+    compute(){
+        var transfer_function = 0;
+
+        var delta = 1;
+        var gain_sum = 0;
+        for(var loop of this.loops)
+            gain_sum += loop[1];
+        delta -= gain_sum;
+        var num = 2;
+        var non_touching_loops = this.non_touching.get(num);
+        while(non_touching_loops.length > 0){
+            gain_sum = 0;
+            var sign = 1;
+            for(var loop of non_touching_loops){
+                gain_sum += loop.gain;
+            }
+            delta += sign * gain_sum;
+            sign = -sign;
+            non_touching_loops = this.non_touching.get(++num);
+        }
+
+        //delta for each forward path
+        var delta_i = new Array(this.forwardPaths.length).fill(1);
+        for(var path in this.forwardPaths){
+            num = 1;
+            non_touching_loops = this.non_touching_paths[path].get(num);
+            while(non_touching_loops.length > 0){
+                gain_sum = 0;
+                var sign = -1;
+                for(var loop of non_touching_loops){
+                    gain_sum += loop.gain;
+                }
+                delta_i[path] += sign * gain_sum;
+                sign = -sign;
+                non_touching_loops = this.non_touching_paths[path].get(++num);
+            }
+            transfer_function += this.forwardPaths[path].gain * delta_i[path];
+        }
+
+        return transfer_function / delta;
     }
     
 }
-var g = new SignalFLowGraph(8);
-var vertices = [ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+var g = new SignalFLowGraph(9);
+var vertices = [ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
  
 // adding vertices
 for (var i = 0; i < vertices.length; i++) {
@@ -227,21 +269,19 @@ for (var i = 0; i < vertices.length; i++) {
  
 // adding edges
 g.addEdge('A', 'B', 1);
-g.addEdge('B', 'C', 2);
-g.addEdge('C', 'D', 3);
-g.addEdge('D', 'E', 4);
-g.addEdge('E', 'F', 6);
-g.addEdge('F', 'G', 5);
-g.addEdge('G', 'H', 3);
-g.addEdge('G', 'G', 200);
-g.addEdge('C', 'B', 5);
-g.addEdge('D', 'C', 5);
-g.addEdge('B', 'D', 5);
-g.addEdge('E', 'D', 5);
-g.addEdge('F', 'E', 5);
-g.addEdge('G', 'F', 5);
-g.addEdge('G', 'E', 5);
-g.addEdge('B', 'G', 5);
+g.addEdge('B', 'C', 1);
+g.addEdge('C', 'D', 1);
+g.addEdge('D', 'E', 1);
+g.addEdge('E', 'F', 1);
+g.addEdge('F', 'G', 1);
+g.addEdge('G', 'H', 1);
+g.addEdge('H', 'I', 1);
+g.addEdge('F', 'H', 1);
+g.addEdge('H', 'F', -1);
+g.addEdge('D', 'G', 1);
+g.addEdge('F', 'E', -1);
+g.addEdge('G', 'C', -1);
+g.addEdge('H', 'B', -1);
 
 
 
@@ -262,7 +302,7 @@ g.printGraph();
 // DFS
 // A B C E D F
 console.log("DFS");
-g.analyze('A', 'H');
+g.analyze('A', 'I');
 console.log(g.forwardPaths, g.loops);
 var mason = new Mason(g.forwardPaths, g.loops);
 var combination = [];
@@ -273,6 +313,7 @@ do {
 
 } while(mason.non_touching.get(num++).length > 0);
 mason.getNonTouchingPath();
+console.log(mason.compute());
 /*else { // If visited before then a cycle is detected
                 var index = 0;
                 for(var i in path){
