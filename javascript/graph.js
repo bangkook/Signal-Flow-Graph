@@ -122,7 +122,7 @@ class SignalFLowGraph {
     }
 }
 
- class Mason{
+class Mason {
     constructor(forwardPaths, loops)
     {
         this.forwardPaths = forwardPaths;
@@ -132,14 +132,13 @@ class SignalFLowGraph {
         this.delta = new Map();
         for(var i = 0; i < 100; i++)
             this.non_touching.set(i, []);
-
     }
 
-     // check if all loops of the combination are non-touching
-     isNonTouching(combination){
-        for(var i = 0; i < combination.length; i++){
-            for(var j = i + 1; j < combination.length; j++){
-                for(var node of this.loops[combination[i]][0]){
+    // check if all loops of the combination are non-touching
+    isNonTouching(combination) {
+        for(var i = 0; i < combination.length; i++) {
+            for(var j = i + 1; j < combination.length; j++) {
+                for(var node of this.loops[combination[i]][0]) {
                     if(this.loops[combination[j]][0].indexOf(node) != -1)
                         return false;
                 }
@@ -149,21 +148,21 @@ class SignalFLowGraph {
     }
 
     // add non-touching loops to the corresponding map
-    addNonTouching(loops, length, gain){
+    addNonTouching(loops, length, gain) {
         this.non_touching.get(length).push({"loops": loops.map((x) => x), "gain": gain});
     }
 
     // produce all combinations of loops, and check if they are non-touching or not
-    getCombinations(loop, length, combination, gain){
+    getCombinations(loop, length, combination, gain) {
 
         if(combination.length == length){
-            if(this.isNonTouching(combination)){
+            if(this.isNonTouching(combination)) {
                 this.addNonTouching(combination, length, gain);
             }
             return;
         }
 
-        for(var i = loop; i < this.loops.length; i++){
+        for(var i = loop; i < this.loops.length; i++) {
             combination.push(i);
             gain *= this.loops[i][1];
             this.getCombinations(i + 1, length, combination, gain);
@@ -173,16 +172,18 @@ class SignalFLowGraph {
 
     }
 
-    getNonTouchingPath(){
+    // Get all loops not touching each forward path
+    getNonTouchingPath() {
         var idx = 0, num = 1;
+        // Get single loops first and their gain
         for(var path of this.forwardPaths) {
             this.non_touching_paths[idx] = new Map();
             for(var j = 0; j < 100; j++)
                 this.non_touching_paths[idx].set(j, []);
-            for(var i = 0; i < this.loops.length; i++){
+            for(var i = 0; i < this.loops.length; i++) {
                 var nonTouching = true;
-                for(var node of this.loops[i][0]){
-                    if(path.nodes.indexOf(node) != -1){
+                for(var node of this.loops[i][0]) {
+                    if(path.nodes.indexOf(node) != -1) {
                         nonTouching = false;
                         break;
                     }
@@ -193,7 +194,8 @@ class SignalFLowGraph {
             idx++;
         }
 
-        for(var idx in this.forwardPaths){
+        // Get 2 or more non-touching loops
+        for(var idx in this.forwardPaths) {
             //Loops not intersecting with path
             var path_loops = this.non_touching_paths[idx].get(1); 
             for(var num = 2; num < 100; num++){
@@ -202,21 +204,23 @@ class SignalFLowGraph {
                     break;
                 for(var data of loops){
                     var indeces = data.loops, cnt = 0;
-                    for(var index of path_loops){
+                    for(var index of path_loops) {
+                        // Count number of non intersecting loops with the path
                         if(indeces.indexOf(index.loops) != -1)
                             cnt++;
                     }
-                    if(cnt < indeces.length){
+                    // If one or more loops intersect with the path, continue
+                    if(cnt < indeces.length) {
                         continue;
                     }
                     this.non_touching_paths[idx].get(num).push(data);
                 }
             }
-            //console.log(idx, this.non_touching_paths[idx]);
         }
     }
 
-    compute(){
+    // Compute the transfer function of the graph
+    compute() {
         var transfer_function = 0;
 
         var delta = 1;
@@ -226,10 +230,10 @@ class SignalFLowGraph {
         delta -= gain_sum;
         var num = 2;
         var non_touching_loops = this.non_touching.get(num);
-        while(non_touching_loops.length > 0){
+        while(non_touching_loops.length > 0) {
             gain_sum = 0;
             var sign = 1;
-            for(var loop of non_touching_loops){
+            for(var loop of non_touching_loops) {
                 gain_sum += loop.gain;
             }
             delta += sign * gain_sum;
@@ -242,10 +246,10 @@ class SignalFLowGraph {
         for(var path in this.forwardPaths){
             num = 1;
             non_touching_loops = this.non_touching_paths[path].get(num);
-            while(non_touching_loops.length > 0){
+            while(non_touching_loops.length > 0) {
                 gain_sum = 0;
                 var sign = -1;
-                for(var loop of non_touching_loops){
+                for(var loop of non_touching_loops) {
                     gain_sum += loop.gain;
                 }
                 delta_i[path] += sign * gain_sum;
@@ -259,6 +263,7 @@ class SignalFLowGraph {
     }
     
 }
+
 var g = new SignalFLowGraph(9);
 var vertices = [ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
  
