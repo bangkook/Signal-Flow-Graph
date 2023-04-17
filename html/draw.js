@@ -17,6 +17,7 @@ window.onload = function() {
     drawNode();
     nodenumber++;
     nodes.push(node); // Add the new node to the list of nodes
+    console.log(nodes)
   });
 
   const lineButton = document.querySelector('#line');
@@ -65,13 +66,55 @@ function drawNode() {
 
 
 function drawLine() {
-  stage.on('click', (e) => {
-    const target = e.target;
-    if (target instanceof Konva.Shape) {
-      const rect = target.getClientRect();
-      console.log(rect);
-    } else {
-      console.log('Error: No node was clicked');
-    }
-  });
-}
+    var line, isDrawing = false, firstNode;
+    
+    stage.on('mousedown', (e) => {
+      const target = e.target;
+      if (target instanceof Konva.Shape) {
+        const rect = target.getClientRect();
+        firstNode = target;
+        const startPoint = stage.getPointerPosition();
+        const x = startPoint.x;
+        const y = startPoint.y;
+        line = new Konva.Arrow({
+          points: [x, y, x, y],
+          stroke: "black",
+          strokeWidth: 2
+        });
+        layer.add(line);
+        layer.draw();
+        isDrawing = true;
+      } else {
+        isDrawing = false;
+      }
+    });
+    
+    stage.on('mousemove', (e) => {
+      if (!isDrawing) {
+        return;
+      }
+      const pos = stage.getPointerPosition();
+      const x = pos.x;
+      const y = pos.y;
+      const points = [line.points()[0], line.points()[1], x, y];
+      line.points(points);
+      layer.batchDraw();
+    });
+    
+    stage.on('mouseup', (e) => {
+      const target = e.target;
+      if (!isDrawing) {
+        return;
+      }
+      console.log(e.target)
+      if (!(target instanceof Konva.Shape)) {
+        line.destroy();
+        layer.draw();
+      }
+      isDrawing = false;
+    });
+  }
+  
+  
+  
+ 
