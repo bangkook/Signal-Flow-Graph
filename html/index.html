@@ -5,15 +5,15 @@
 <div class="body">
     <section class="tools">
         <ul>
-            <li class="option tool">
-                <img src="https://cdn-icons-png.flaticon.com/512/463/463612.png" class="option tool" id="ClearAll" width="30" height="30">
-                <div class="dropdown-content">
+            <li class="option tool" id="clear">
+                <img src="https://cdn-icons-png.flaticon.com/512/463/463612.png" style=" transform: translateY(25%);" class="option tool" id="ClearAll" width="30" height="30">
+                <div class="dropdown-content" >
                     <a>Clear all</a>
                 </div>
             </li>
 
-            <li class="option tool">
-                <img src="https://cdn-icons-png.flaticon.com/512/3580/3580104.png" class="option tool" id="saveimage" width="30" height="30">
+            <li class="option tool" id= "save">
+                <img src="https://cdn-icons-png.flaticon.com/512/3580/3580104.png" style=" transform: translateY(25%);" class="option tool" id="saveimage" width="30" height="30">
                 <div class="dropdown-content">
                     <a>Save Image</a>
                 </div>
@@ -24,15 +24,9 @@
     <section class="line">
         <ul>
             <li class="option tool" id = "node">
-                <img src="https://cdn-icons-png.flaticon.com/512/481/481078.png" class="option tool" width="30" height="30">
+                <img src="https://cdn2.iconfinder.com/data/icons/healthcare-20/100/hospital-sign-512.png" class="option tool" style=" transform: translateY(-5%);" width="50" height="50">
                 <div class="dropdown-content">
                     <a >Add node</a>
-                </div>
-            </li>
-            <li class="option tool" >
-                <img src="https://cdn-icons-png.flaticon.com/512/481/481078.png" class="option tool" width="30" height="30">
-                <div class="dropdown-content">
-                    <a >Add line</a>
                 </div>
             </li>
             <li class="option tool" id="from">
@@ -41,6 +35,9 @@
             <li class="option tool" id="to">
                 <input type="text" placeholder="to" id="to-input">
             </li>
+            <li class="option tool" id="gain">
+                <input type="text" placeholder="gain" id="gain-input">
+            </li>
             <li class="option tool" id = "line">
                 <button  class="option tool" id="but" (click)="addLine()"> Connect </button>
             </li>
@@ -48,5 +45,8 @@
     </section>
     <div id="drawing-board" class="draw">
     </div>
+    <p><center><em>Made by:</em> <i>Maria Bassel, Sara Gaballah, Eman Samir, Mariam Hossam and Nisreen Hisham</i>.</center></p>
+
+
 </div>
 </html>

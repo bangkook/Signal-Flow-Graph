@@ -1,7 +1,7 @@
 let nodenumber=0;
 const nodes = [];
 let node;
-let from, to;
+let from, to, gain;
 const layer = new Konva.Layer();
 
 window.onload = function() {
@@ -25,12 +25,46 @@ window.onload = function() {
     });
     from = document.getElementById("from-input").value;
     to = document.getElementById("to-input").value;
-    console.log("from: "+from);
-    console.log("to: "+to);
+    gain = document.getElementById("gain-input").value;
     drawLine();
   });
 
+  const clearButton = document.querySelector('#clear');
+  clearButton.addEventListener('click', () => {
+    clearAll();
+  });
+
+  const saveButton = document.querySelector('#save');
+  saveButton.addEventListener('click', () => {
+    save();
+  });
+
 }
+
+function save(){
+  const dataURL = stage.toDataURL();
+  const img = new Image();
+  img.src = dataURL;
+  const link = document.createElement('a');
+  link.download = 'image.png';
+  link.href = dataURL;
+  link.click();
+}
+
+function clearAll(){
+  if (confirm('Are you sure you want to clear all?')) {
+    nodes.forEach(node => {
+      node.destroy();
+    });
+    nodes.length = 0;
+    nodenumber = 0;
+    layer.destroyChildren();
+    layer.clear();
+    stage.add(layer);
+    console.log("Cleared!!");
+  }
+}
+
 
 function drawNode() {
   node = new Konva.Label({
@@ -81,16 +115,25 @@ function drawLine(){
     to.value='';
     return;
   }
-    first_pointx =  (shape1.attrs.x * 2+shape1.attrs.width)/2;
-    first_pointy =  (shape1.attrs.y * 2+shape1.attrs.height)/2;
-    second_pointx = (shape2.attrs.x * 2+shape2.attrs.width)/2;
-    second_pointy = (shape2.attrs.y * 2+shape2.attrs.height)/2;
+    first_pointx = (shape1.attrs.x*2+shape1.attrs.width)/2;
+    first_pointy = (shape1.attrs.y*2+shape1.attrs.height)/2;
+    second_pointx = (shape2.attrs.x*2+shape2.attrs.width)/2;
+    second_pointy = (shape2.attrs.y*2+shape2.attrs.height)/2;
   let arrow = new Konva.Arrow({
     points: [first_pointx,first_pointy,second_pointx,second_pointy],
     stroke: 'black',
     fill: 'black'
   });
+  let text = new Konva.Text({
+    text: gain,
+    x: (first_pointx + second_pointx) / 2,
+    y: (first_pointy + second_pointy) / 2,
+    fontSize: 20,
+    fill: 'blue',
+    listening: false // disable event listening to avoid interfering with the arrow shape
+  });
   layer.add(arrow);
+  layer.add(text);
   from.value='';
   to.value='';
   layer.batchDraw();
