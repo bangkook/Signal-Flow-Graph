@@ -1,2 +1,46 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<link rel="stylesheet" type="text/css" href="style.css">
+<div class="body">
+    <section class="tools">
+        <ul>
+            <li class="option tool">
+                <img src="https://cdn-icons-png.flaticon.com/512/463/463612.png" class="option tool" id="ClearAll" width="30" height="30">
+                <div class="dropdown-content">
+                    <a>Clear all</a>
+                </div>
+            </li>
+
+            <li class="option tool">
+                <img src="https://cdn-icons-png.flaticon.com/512/3580/3580104.png" class="option tool" id="saveimage" width="30" height="30">
+                <div class="dropdown-content">
+                    <a>Save Image</a>
+                </div>
+            </li>
+           
+        </ul>
+    </section>
+    <section class="line">
+        <ul>
+            <li class="option tool" >
+                <img src="https://cdn-icons-png.flaticon.com/512/481/481078.png" class="option tool" width="30" height="30">
+                <div class="dropdown-content">
+                    <a>Add node</a>
+                </div>
+            </li>
+         
+            <li class="option tool" >
+                <input  type="text" placeholder="from" id="from">
+            </li>
+            <li class="option tool">
+                <input type="text" placeholder="to" id="to">
+            </li>
+            <li class="option tool">
+                <button  class="option tool" id="but" (click)="addLine()"> Connect </button>
+            </li>
+        </ul>
+    </section>
+
+    <div id="drawing-board" class="draw">
+    </div>
+</div>
+</html>
