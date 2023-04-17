@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <link rel="stylesheet" type="text/css" href="style.css">
-<script src="draw.js"></script>
-<script src="https://unpkg.com/konva@8/konva.min.js"></script>
+<script src="https://unpkg.com/konva@7.0.0/konva.min.js"></script>
+  <script src="draw.js"></script>
 <div class="body">
     <section class="tools">
         <ul>
@@ -23,13 +23,18 @@
     </section>
     <section class="line">
         <ul>
-            <li class="option tool" >
+            <li class="option tool" id = "node">
                 <img src="https://cdn-icons-png.flaticon.com/512/481/481078.png" class="option tool" width="30" height="30">
                 <div class="dropdown-content">
-                    <a>Add node</a>
+                    <a >Add node</a>
                 </div>
             </li>
-         
+            <li class="option tool" id = "line">
+                <img src="https://cdn-icons-png.flaticon.com/512/481/481078.png" class="option tool" width="30" height="30">
+                <div class="dropdown-content">
+                    <a >Add line</a>
+                </div>
+            </li>
             <li class="option tool" >
                 <input  type="text" placeholder="from" id="from">
             </li>
@@ -41,7 +46,6 @@
             </li>
         </ul>
     </section>
-
     <div id="drawing-board" class="draw">
     </div>
 </div>
