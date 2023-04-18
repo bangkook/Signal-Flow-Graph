@@ -264,29 +264,29 @@ class Mason {
     
 }
 
-var g = new SignalFLowGraph(9);
-var vertices = [ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
+// var g = new SignalFLowGraph(9);
+// var vertices = [ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
  
 // adding vertices
-for (var i = 0; i < vertices.length; i++) {
-    g.addVertex(vertices[i]);
-}
+// for (var i = 0; i < vertices.length; i++) {
+//     g.addVertex(vertices[i]);
+// }
  
 // adding edges
-g.addEdge('A', 'B', 1);
-g.addEdge('B', 'C', 1);
-g.addEdge('C', 'D', 1);
-g.addEdge('D', 'E', 1);
-g.addEdge('E', 'F', 1);
-g.addEdge('F', 'G', 1);
-g.addEdge('G', 'H', 1);
-g.addEdge('H', 'I', 1);
-g.addEdge('F', 'H', 1);
-g.addEdge('H', 'F', -1);
-g.addEdge('D', 'G', 1);
-g.addEdge('F', 'E', -1);
-g.addEdge('G', 'C', -1);
-g.addEdge('H', 'B', -1);
+// g.addEdge('A', 'B', 1);
+// g.addEdge('B', 'C', 1);
+// g.addEdge('C', 'D', 1);
+// g.addEdge('D', 'E', 1);
+// g.addEdge('E', 'F', 1);
+// g.addEdge('F', 'G', 1);
+// g.addEdge('G', 'H', 1);
+// g.addEdge('H', 'I', 1);
+// g.addEdge('F', 'H', 1);
+// g.addEdge('H', 'F', -1);
+// g.addEdge('D', 'G', 1);
+// g.addEdge('F', 'E', -1);
+// g.addEdge('G', 'C', -1);
+// g.addEdge('H', 'B', -1);
 
 
 
@@ -300,25 +300,28 @@ g.addEdge('H', 'B', -1);
 // D -> A E
 // E -> A D F C
 // F -> E C
-g.printGraph();
+// g.printGraph();
 
 
 // prints
 // DFS
 // A B C E D F
-console.log("DFS");
-g.analyze('A', 'I');
-console.log(g.forwardPaths, g.loops);
-var mason = new Mason(g.forwardPaths, g.loops);
-var combination = [];
-var num = 2;
-do {
-    mason.getCombinations(0, num, combination, 1);
-    console.log(mason.non_touching.get(num));
 
-} while(mason.non_touching.get(num++).length > 0);
-mason.getNonTouchingPath();
-console.log(mason.compute());
+// console.log("DFS");
+// g.analyze('A', 'I');
+// console.log(g.forwardPaths, g.loops);
+// var mason = new Mason(g.forwardPaths, g.loops);
+// var combination = [];
+// var num = 2;
+// do {
+//     mason.getCombinations(0, num, combination, 1);
+//     console.log(mason.non_touching.get(num));
+
+// } while(mason.non_touching.get(num++).length > 0);
+// mason.getNonTouchingPath();
+// console.log(mason.compute());
+
+
 /*else { // If visited before then a cycle is detected
                 var index = 0;
                 for(var i in path){

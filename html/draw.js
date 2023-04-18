@@ -3,6 +3,7 @@ const nodes = [];
 let node, layer;
 let from, to, gain;
 let map = new Map();
+const SFG = new SignalFLowGraph();
 window.onload = function() {
     stage = new Konva.Stage({
     container: "drawing-board",
@@ -17,6 +18,7 @@ window.onload = function() {
     drawNode();
     nodenumber++;
     nodes.push(node); // Add the new node to the list of nodes
+    
     console.log(nodes)
   });
 
@@ -29,6 +31,7 @@ window.onload = function() {
     to = document.getElementById("to-input").value;
     gain = document.getElementById("gain-input").value;
     drawLine();
+    SFG.printGraph();
   });
 
   const clearButton = document.querySelector('#clear');
@@ -39,6 +42,22 @@ window.onload = function() {
   const saveButton = document.querySelector('#save');
   saveButton.addEventListener('click', () => {
     save();
+  });
+
+  const analyzeButton = document.querySelector('#analyze');
+  analyzeButton.addEventListener('click', () => {
+    SFG.analyze('X0','X' + --nodenumber);
+    console.log(SFG.forwardPaths, SFG.loops);
+    const mason = new Mason(SFG.forwardPaths, SFG.loops);
+    var combination = [];
+    var num = 2;
+    do {
+        mason.getCombinations(0, num, combination, 1);
+        console.log(mason.non_touching.get(num));
+
+    } while(mason.non_touching.get(num++).length > 0);
+    mason.getNonTouchingPath();
+    console.log(mason.compute());
   });
 
 }
@@ -98,6 +117,7 @@ function drawNode() {
       verticalAlign: 'middle' ,
       name: 'X'+ nodenumber,
     }))
+    SFG.addVertex(node.name());
     layer.add(node);
     stage.add(layer);
 }
@@ -214,4 +234,6 @@ function drawLine() {
       to.value = '';
       return;
     }
+    SFG.addEdge(shape1.name(), shape2.name(), gain);
+    SFG.getAdjList();
   }

@@ -15,6 +15,14 @@
     left: 20px;
     top: 16px;
 }
+.analyzebut{
+    border-radius: 10px;
+    position: relative;
+    width: 128px;
+    height: 65px;
+    left: 1305px;
+    bottom: 63px;
+}
 .line{
     border-radius: 10px;
     position: relative;
