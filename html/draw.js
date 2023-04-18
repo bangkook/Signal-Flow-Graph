@@ -144,6 +144,7 @@ function drawLine() {
           tension: 0.5 // set tension to a non-zero value to create a curve
           
         });
+      
         let text = new Konva.Text({
             text: gain,
             x: (first_pointx + second_pointx) / 2,
@@ -159,6 +160,30 @@ function drawLine() {
         layer.batchDraw();
          console.log("case 1");
       }else{
+        if(index1 == index2){
+          let curvePx =  (first_pointx + second_pointx)/2 
+          let curvePy =  (first_pointy + second_pointy)/2  + 70 * Math.max(map.get(index1),map.get(index2))
+          let arrow = new Konva.Arrow({
+              points: [first_pointx, first_pointy,curvePx ,curvePy ,curvePx + 70 ,curvePy,second_pointx, second_pointy],
+              stroke: 'black',
+              fill: 'black',
+              tension: 0.5 // set tension to a non-zero value to create a curve
+            });
+          let text = new Konva.Text({
+            text: gain,
+            x: (first_pointx + second_pointx)/2 ,
+            y: (first_pointy + second_pointy)/2  + 70 * Math.max(map.get(index1),map.get(index2)),
+            fontSize: 20,
+            fill: 'blue',
+            listening: false // disable event listening to avoid interfering with the arrow shape
+          });
+        layer.add(arrow);
+        layer.add(text);
+        from.value = '';
+        to.value = '';
+        layer.batchDraw();
+
+        } else{
         let curvePx =  (first_pointx + second_pointx)/2 
         let curvePy =  (first_pointy + second_pointy)/2  + 50 * Math.max(map.get(index1),map.get(index2))
 
@@ -182,7 +207,7 @@ function drawLine() {
           to.value = '';
           layer.batchDraw();
       }
-      
+    }
 
     } else {
       from.value = '';
