@@ -1,7 +1,12 @@
 let nodenumber=0;
 const nodes = [];
 let node, layer;
+let curvePx ,curvePy;
 let from, to, gain;
+let positionx=10;
+let positiony=280;
+let turn = 0;
+let i = 1;
 let map = new Map();
 const SFG = new SignalFLowGraph();
 window.onload = function() {
@@ -10,11 +15,14 @@ window.onload = function() {
     width: window.innerWidth,
     height: window.innerHeight,
   });
-//  const signalFlowGraph = new SignalFlowGraph(4);
 
   layer = new Konva.Layer();
   const addNodeButton = document.querySelector('#node');
   addNodeButton.addEventListener('click', () => {
+    if(nodenumber>=10){
+      positionx = 670;
+      positiony = 450;
+    }
     drawNode();
     nodenumber++;
     nodes.push(node); // Add the new node to the list of nodes
@@ -88,10 +96,11 @@ function clearAll(){
 
 
 function drawNode() {
+  
   node = new Konva.Label({
     name: 'X' + nodenumber,
-    x: 750,
-    y: 280,
+    x: positionx,
+    y: positiony,
     draggable:true,
     width: 50,
     height:50,
@@ -120,6 +129,7 @@ function drawNode() {
     SFG.addVertex(node.name());
     layer.add(node);
     stage.add(layer);
+    positionx=positionx+150;
 }
 function drawLine() {
     let shape1;
@@ -156,7 +166,7 @@ function drawLine() {
       second_pointx = (shape2.attrs.x * 2 + shape2.attrs.width) / 2;
       second_pointy = (shape2.attrs.y * 2 + shape2.attrs.height) / 2;
 
-      if((map.get(index1) == 1 || map.get(index2) == 1) && (index2 - index1) == 1 ){
+      if( (index2 - index1) == 1 || (index2 - index1) == -1 ){
         let arrow = new Konva.Arrow({
           points: [first_pointx, first_pointy, second_pointx, second_pointy],
           stroke: 'black',
@@ -181,9 +191,9 @@ function drawLine() {
          console.log("case 1");
       }else{
         if(index1 == index2){
-          let curvePx =  (first_pointx + second_pointx)/2 
-          let curvePy =  (first_pointy + second_pointy)/2  + 70 * Math.max(map.get(index1),map.get(index2))
-          let arrow = new Konva.Arrow({
+           curvePx =  (first_pointx + second_pointx)/2 
+           curvePy =  (first_pointy + second_pointy)/2  + 70 * Math.max(map.get(index1),map.get(index2))
+           arrow = new Konva.Arrow({
               points: [first_pointx, first_pointy,curvePx ,curvePy ,curvePx + 70 ,curvePy,second_pointx, second_pointy],
               stroke: 'black',
               fill: 'black',
@@ -204,28 +214,34 @@ function drawLine() {
         layer.batchDraw();
 
         } else{
-        let curvePx =  (first_pointx + second_pointx)/2 
-        let curvePy =  (first_pointy + second_pointy)/2  + 50 * Math.max(map.get(index1),map.get(index2))
-
-        let arrow = new Konva.Arrow({
-            points: [first_pointx, first_pointy,curvePx ,curvePy ,second_pointx, second_pointy],
-            stroke: 'black',
-            fill: 'black',
-            tension: 0.5 // set tension to a non-zero value to create a curve
-          });
-          let text = new Konva.Text({
-            text: gain,
-            x: curvePx,
-            y: curvePy,
-            fontSize: 20,
-            fill: 'blue',
-            listening: false // disable event listening to avoid interfering with the arrow shape
-          });
-          layer.add(arrow);
-          layer.add(text);
-          from.value = '';
-          to.value = '';
-          layer.batchDraw();
+          if(turn){
+             curvePx =  (first_pointx + second_pointx)/2 
+             curvePy =  (first_pointy + second_pointy)/2  + -50 * Math.max(map.get(index1),map.get(index2))
+             turn=0;
+          }else{
+             curvePx =  (first_pointx + second_pointx)/2 
+             curvePy =  (first_pointy + second_pointy)/2  + 50 * Math.max(map.get(index1),map.get(index2))
+             turn=1;
+          }
+            let arrow = new Konva.Arrow({
+                points: [first_pointx, first_pointy,curvePx ,curvePy ,second_pointx, second_pointy],
+                stroke: 'black',
+                fill: 'black',
+                tension: 0.5 // set tension to a non-zero value to create a curve
+              });
+              let text = new Konva.Text({
+                text: gain,
+                x: curvePx,
+                y: curvePy,
+                fontSize: 20,
+                fill: 'blue',
+                listening: false // disable event listening to avoid interfering with the arrow shape
+              });
+              layer.add(arrow);
+              layer.add(text);
+              from.value = '';
+              to.value = '';
+              layer.batchDraw();
       }
     }
 
