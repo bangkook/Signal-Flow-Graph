@@ -81,6 +81,8 @@
     box-shadow: 0 8px 10px -7px black;
     background: #ffffff;
     bottom: 35px;
+    overflow-y: scroll;
+    overflow-x: scroll;
 }
 
 .option:is(:hover, .active) img {

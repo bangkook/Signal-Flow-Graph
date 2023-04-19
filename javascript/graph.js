@@ -1,3 +1,4 @@
+let newWindow;
 class SignalFLowGraph {
 
     constructor(noOfVertices)
@@ -120,6 +121,25 @@ class SignalFLowGraph {
             console.log(i + " -> " + conc);
         }
     }
+
+    
+    printForwardPaths() {
+        newWindow = window.open("", "_blank", "width=500, height=500");
+        newWindow.document.write("<h2>Forward Paths:</h2>");
+        for (let i = 0; i < this.forwardPaths.length; i++) {
+            const path = this.forwardPaths[i];
+            newWindow.document.write(`<p>Path ${i+1}: ${path.nodes.join(" -> ")}  Gain: ${path.gain}</p>`);
+        }
+    }
+
+    printLoops() {
+        newWindow.document.write("<h2>Loops:</h2>");
+        for (let i = 0; i < this.loops.length; i++) {
+            const [loop, gain] = this.loops[i];
+            newWindow.document.write(`<p>Loop ${i + 1}: ${loop.join(' -> ')} Gain: ${gain}</p>`);
+        }
+        newWindow.document.write('</body></html>');
+    }
 }
 
 class Mason {
@@ -151,7 +171,6 @@ class Mason {
     addNonTouching(loops, length, gain) {
         this.non_touching.get(length).push({"loops": loops.map((x) => x), "gain": gain});
     }
-
     // produce all combinations of loops, and check if they are non-touching or not
     getCombinations(loop, length, combination, gain) {
 
@@ -171,7 +190,6 @@ class Mason {
         }
 
     }
-
     // Get all loops not touching each forward path
     getNonTouchingPath() {
         var idx = 0, num = 1;
@@ -218,7 +236,6 @@ class Mason {
             }
         }
     }
-
     // Compute the transfer function of the graph
     compute() {
         var transfer_function = 0;
@@ -258,7 +275,8 @@ class Mason {
             }
             transfer_function += this.forwardPaths[path].gain * delta_i[path];
         }
-
+        newWindow.document.write("<h2>Transfer Function of the graph:</h2>");
+        newWindow.document.write("Transfer Function: " + transfer_function / delta);
         return transfer_function / delta;
     }
     
