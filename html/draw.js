@@ -70,8 +70,9 @@ window.onload = function() {
             newWindow.document.write(`Loop ${l+1} `);
           }
           newWindow.document.write(` Gain: ${loop.gain}`);
+          newWindow.document.write(` <p></p>`);
       }
-        
+      
     } while(mason.non_touching.get(num++).length > 0);
         mason.getNonTouchingPath();
     mason.compute(newWindow);
