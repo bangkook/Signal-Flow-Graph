@@ -67,9 +67,9 @@ window.onload = function() {
         console.log(num);
         for(var loop of mason.non_touching.get(num)) {
           for(var l of loop.loops){
-            newWindow.document.write(`<p>Loop ${l+1}</p>`);
+            newWindow.document.write(`Loop ${l+1} `);
           }
-          newWindow.document.write(`<p>Gain: ${loop.gain}</p>`);
+          newWindow.document.write(` Gain: ${loop.gain}`);
       }
         
     } while(mason.non_touching.get(num++).length > 0);
