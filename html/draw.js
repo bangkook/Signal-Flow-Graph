@@ -8,7 +8,7 @@ let positiony=280;
 let turn = 0;
 let i = 1;
 let map = new Map();
-const SFG = new SignalFLowGraph();
+const SFG = new SignalFLowGraph(nodenumber+1);
 window.onload = function() {
     stage = new Konva.Stage({
     container: "drawing-board",
@@ -54,22 +54,30 @@ window.onload = function() {
 
   const analyzeButton = document.querySelector('#analyze');
   analyzeButton.addEventListener('click', () => {
-
-
-    SFG.analyze('X0','X' + --nodenumber);
-    SFG.printForwardPaths();
-    SFG.printLoops();
+    let newWindow = window.open("", "_blank", "width=500, height=500");
+    newWindow.document.open();
+    SFG.analyze('X0','X' + (nodenumber-1));
+    SFG.printForwardPathsAndLoops(newWindow); // Print forward paths and loops
     const mason = new Mason(SFG.forwardPaths, SFG.loops);     
     var combination = [];
     var num = 2;
     do {
         mason.getCombinations(0, num, combination, 1);
+        newWindow.document.write(`<h2> ${num} Non Touching Loops:</h2>`);
+        console.log(num);
+        for(var loop of mason.non_touching.get(num)) {
+          for(var l of loop.loops){
+            newWindow.document.write(`<p>Loop ${l+1}</p>`);
+          }
+          newWindow.document.write(`<p>Gain: ${loop.gain}</p>`);
+      }
         
     } while(mason.non_touching.get(num++).length > 0);
         mason.getNonTouchingPath();
-        mason.compute();
+    mason.compute(newWindow);
+    newWindow.document.close();
   });
-
+  
 }
 
 function save(){

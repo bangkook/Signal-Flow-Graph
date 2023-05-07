@@ -1,4 +1,3 @@
-let newWindow;
 class SignalFLowGraph {
 
     constructor(noOfVertices)
@@ -8,7 +7,6 @@ class SignalFLowGraph {
         this.forwardPaths = [];
         this.loops = [];
     }
-    
     // add vertex to the graph
     addVertex(v)
     {
@@ -121,25 +119,23 @@ class SignalFLowGraph {
             console.log(i + " -> " + conc);
         }
     }
-
     
-    printForwardPaths() {
-        newWindow = window.open("", "_blank", "width=500, height=500");
+    printForwardPathsAndLoops(newWindow) {
+        newWindow.document.write("<html><body>");
         newWindow.document.write("<h2>Forward Paths:</h2>");
         for (let i = 0; i < this.forwardPaths.length; i++) {
-            const path = this.forwardPaths[i];
-            newWindow.document.write(`<p>Path ${i+1}: ${path.nodes.join(" -> ")}  Gain: ${path.gain}</p>`);
+            console.log("this.forwardPaths.length: "+this.forwardPaths.length);
+          const path = this.forwardPaths[i];
+          newWindow.document.write(`<p>Path ${i+1}: ${path.nodes.join(" -> ")}  Gain: ${path.gain}</p>`);
         }
-    }
-
-    printLoops() {
         newWindow.document.write("<h2>Loops:</h2>");
         for (let i = 0; i < this.loops.length; i++) {
-            const [loop, gain] = this.loops[i];
-            newWindow.document.write(`<p>Loop ${i + 1}: ${loop.join(' -> ')} Gain: ${gain}</p>`);
+          const [loop, gain] = this.loops[i];
+          newWindow.document.write(`<p>Loop ${i + 1}: ${loop.join(' -> ')} Gain: ${gain}</p>`);
         }
-        newWindow.document.write('</body></html>');
-    }
+        newWindow.document.write("</body></html>");
+      }
+      
 }
 
 class Mason {
@@ -237,7 +233,7 @@ class Mason {
         }
     }
     // Compute the transfer function of the graph
-    compute() {
+    compute(newWindow) {
         var transfer_function = 0;
 
         var delta = 1;
@@ -276,7 +272,8 @@ class Mason {
             transfer_function += this.forwardPaths[path].gain * delta_i[path];
         }
         newWindow.document.write("<h2>Transfer Function of the graph:</h2>");
-        newWindow.document.write("Transfer Function: " + transfer_function / delta);
+        newWindow.document.write(`<p>Transfer Function: &#8721;<sub>i=1</sub><sup>n</sup>&Delta;i * Pi / &Delta; = ${transfer_function / delta}</p>`);    
+        //newWindow.document.write("Transfer Function: " + transfer_function / delta);
         return transfer_function / delta;
     }
     
